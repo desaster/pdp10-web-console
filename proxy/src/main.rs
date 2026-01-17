@@ -29,7 +29,7 @@ use telnet::TelnetHandler;
 #[command(about = "WebSocket to TCP proxy for PDP-10 simulation access")]
 struct Args {
     /// WebSocket listen port
-    #[arg(short, long, default_value = "8080")]
+    #[arg(short, long, default_value = "11133")]
     port: u16,
 
     /// Target definition: NAME:TYPE:HOST:PORT

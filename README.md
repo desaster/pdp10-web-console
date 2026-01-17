@@ -22,10 +22,10 @@ Multi-target WebSocket to TCP proxy.
 ```sh
 cd proxy
 cargo build --release
-./target/release/pdp10-proxy -p 8080 \
-  -t tv11:raw:pidp10.lan:11100 \
-  -t console:telnet:pidp10.lan:1025 \
-  -t term0:telnet:pidp10.lan:10018
+./target/release/pdp10-proxy -p 11133 \
+  -t tv11:raw:192.168.0.10:11100 \
+  -t console:telnet:192.168.0.10:1025 \
+  -t term0:telnet:192.168.0.10:10018
 ```
 
 Target format: `-t NAME:TYPE:HOST:PORT`
