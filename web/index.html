@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PDP-10 Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* 5 main colors */
+      --black: #000000;
+      --gray-dark: #2a2a2a;
+      --gray-mid: #404040;
+      --blue-dark: #1a4b6e;
+      --brown: #8b6914;
+      /* Terminal colors */
+      --term-green: #33ff33;
+      --term-amber: #ffb000;
+      --term-grey: #b0b0b0;
+      /* Keyboard colors */
+      --kbd-bg: #1a1a1a;
+      --kbd-key: #3a3a3a;
+      --kbd-key-hover: #4a4a4a;
+      --kbd-key-active: #5a5a5a;
+      --kbd-key-text: #ccc;
+      --kbd-mod-active: var(--blue-dark);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      background: var(--black);
+      color: #ccc;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 13px;
+    }
+
+    /* Main layout */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    /* Header bar */
+    #header-bar {
+      display: flex;
+      align-items: center;
+      background: var(--blue-dark);
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      gap: 16px;
+    }
+    .logo {
+      display: flex;
+      gap: 2px;
+    }
+    .logo .letter {
+      background: #fff;
+      color: var(--blue-dark);
+      font-family: 'Roboto Condensed', Arial Narrow, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 1px 3px;
+      line-height: 1.1;
+    }
+    .logo-pdp {
+      font-family: 'Oswald', Arial, sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: #fff;
+      letter-spacing: 2px;
+    }
+    .tab-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.3);
+      margin: 0 8px;
+    }
+    .tab-group {
+      display: flex;
+    }
+    .tab {
+      padding: 10px 16px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .tab:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+    }
+    .tab.active {
+      color: #fff;
+      background: var(--black);
+    }
+    .header-spacer {
+      flex: 1;
+    }
+
+    .toolbar-btn {
+      padding: 10px 12px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+    }
+    .toolbar-btn:hover {
+      color: #fff;
+    }
+
+    /* Content area */
+    #content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Terminal container */
+    #terminal-area {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      background: var(--black);
+    }
+
+    /* Terminal panels */
+    .terminal-panel {
+      display: none;
+      position: relative;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .terminal-panel.active {
+      display: flex;
+    }
+
+    /* Terminal window - wraps titlebar + content */
+    .terminal-window {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--gray-mid);
+    }
+    .terminal-titlebar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--gray-dark);
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+    .color-switcher {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .color-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--gray-mid);
+      cursor: pointer;
+      padding: 0;
+      transition: border-color 0.15s;
+    }
+    .color-btn:hover {
+      border-color: #888;
+    }
+    .color-btn.active {
+      border-color: #fff;
+    }
+    .color-btn.green { background: var(--term-green); }
+    .color-btn.amber { background: var(--term-amber); }
+    .color-btn.grey { background: var(--term-grey); }
+    .connect-btn {
+      background: transparent;
+      border: 1px solid #4a4;
+      color: #4a4;
+      padding: 2px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .connect-btn:hover {
+      border-color: #6c6;
+      color: #6c6;
+      background: rgba(68, 170, 68, 0.1);
+    }
+    .connect-btn.connected {
+      border-color: #a44;
+      color: #a44;
+    }
+    .connect-btn.connected:hover {
+      border-color: #c66;
+      color: #c66;
+      background: rgba(170, 68, 68, 0.1);
+    }
+    .titlebar-buttons {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .titlebar-btn {
+      background: transparent;
+      border: 1px solid #666;
+      color: #888;
+      padding: 2px 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .titlebar-btn:hover {
+      border-color: #888;
+      color: #aaa;
+    }
+    .titlebar-btn.active {
+      border-color: var(--blue-dark);
+      color: #aaa;
+      background: rgba(26, 75, 110, 0.3);
+    }
+    .terminal-content {
+      position: relative;
+      background: #000;
+    }
+
+
+    /* Knight TV canvas */
+    #tv11-panel canvas {
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* Text terminal panels */
+    .text-terminal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Virtual keyboard container */
+    .virtual-keyboard-container {
+      display: none;
+      width: 100%;
+      max-width: 1100px;
+    }
+    .terminal-panel.keyboard-visible .virtual-keyboard-container {
+      display: block;
+    }
+
+    /* Virtual keyboard styles */
+    .virtual-keyboard {
+      background: var(--kbd-bg);
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid var(--gray-mid);
+      user-select: none;
+    }
+    .vk-key {
+      --key-width: 1;
+      width: calc(var(--key-width) * 40px);
+      height: 32px;
+      background: var(--key-color, var(--kbd-key));
+      border: 1px solid var(--gray-mid);
+      border-radius: 3px;
+      color: var(--key-text-color, var(--kbd-key-text));
+      font-size: 10px;
+      font-family: monospace;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      transition: background 0.1s, transform 0.05s;
+      position: relative;
+    }
+    .vk-key:hover {
+      background: var(--kbd-key-hover);
+    }
+    .vk-key.vk-pressed {
+      background: var(--kbd-key-active);
+      transform: translateY(1px);
+    }
+    .vk-key.vk-modifier {
+      font-size: 9px;
+    }
+    .vk-key.vk-active {
+      background: var(--kbd-mod-active);
+      border-color: #2a6b9e;
+    }
+    .vk-label {
+      line-height: 1;
+    }
+    .vk-label-shift {
+      font-size: 10px;
+      color: #888;
+      position: absolute;
+      top: 2px;
+      right: 4px;
+    }
+    .virtual-keyboard.vk-shifted .vk-label-shift {
+      color: var(--kbd-key-text);
+    }
+    /* Spacer keys (invisible) */
+    .vk-key[data-key-id^="spacer"],
+    .vk-key[data-key-id^="sp-"] {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* KLE absolute positioning layout */
+    .virtual-keyboard.vk-kle {
+      --kle-unit: 36px;
+      --kle-gap: 3px;
+      position: relative;
+      width: calc(var(--kle-width) * (var(--kle-unit) + var(--kle-gap)));
+      height: calc(var(--kle-height) * (var(--kle-unit) + var(--kle-gap)));
+      margin: 0 auto;
+    }
+    .vk-kle .vk-key {
+      position: absolute;
+      left: calc(var(--key-x) * (var(--kle-unit) + var(--kle-gap)));
+      top: calc(var(--key-y) * (var(--kle-unit) + var(--kle-gap)));
+      width: calc(var(--key-width) * var(--kle-unit) + (var(--key-width) - 1) * var(--kle-gap));
+      height: calc(var(--key-height) * var(--kle-unit) + (var(--key-height) - 1) * var(--kle-gap));
+      font-size: 12px;
+    }
+    /* ISO Enter key (inverted L-shape) - using clip-path */
+    .vk-kle .vk-key.vk-iso-enter {
+      /* Top part dimensions from w, bottom from w2 */
+      --iso-top-w: calc(var(--key-width, 1.25) * var(--kle-unit) + (var(--key-width, 1.25) - 1) * var(--kle-gap));
+      --iso-bottom-w: calc(var(--key-w2, 1.5) * var(--kle-unit) + (var(--key-w2, 1.5) - 1) * var(--kle-gap));
+      --iso-row-h: calc(var(--kle-unit) + var(--kle-gap));
+      --iso-offset: calc(var(--key-x2, -0.25) * -1 * (var(--kle-unit) + var(--kle-gap)));
+
+      /* Position and size based on bottom (wider) part */
+      width: var(--iso-bottom-w);
+      margin-left: calc(var(--key-x2, -0.25) * (var(--kle-unit) + var(--kle-gap)));
+
+      /* Clip to inverted-L: top-right part + full bottom */
+      clip-path: polygon(
+        var(--iso-offset) 0,
+        calc(var(--iso-offset) + var(--iso-top-w)) 0,
+        calc(var(--iso-offset) + var(--iso-top-w)) var(--iso-row-h),
+        100% var(--iso-row-h),
+        100% 100%,
+        0 100%,
+        0 var(--iso-row-h),
+        var(--iso-offset) var(--iso-row-h)
+      );
+    }
+
+    /* Center-aligned legends (Knight-style) - single label with line breaks */
+    .vk-key.vk-center-legend .vk-label {
+      white-space: pre-line;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      width: 200px;
+      background: var(--gray-dark);
+      padding: 12px;
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sidebar-section h3 {
+      margin: 0 0 10px 0;
+      color: #999;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .sidebar-section section {
+      margin-bottom: 12px;
+    }
+    .sidebar-section section h4 {
+      margin: 0 0 4px 0;
+      color: #666;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .sidebar-section dl {
+      margin: 0;
+      font-size: 11px;
+    }
+    .sidebar-section dt {
+      color: var(--brown);
+      font-family: monospace;
+      font-weight: bold;
+      float: left;
+      clear: left;
+      width: 60px;
+    }
+    .sidebar-section dd {
+      margin: 0 0 3px 63px;
+      color: #aaa;
+    }
+    .sidebar-section pre {
+      margin: 0;
+      font-family: monospace;
+      font-size: 11px;
+      color: #aaa;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+
+    /* Links section */
+    #links-section a {
+      display: block;
+      color: #7ab;
+      text-decoration: none;
+      font-size: 12px;
+      padding: 3px 0;
+    }
+    #links-section a:hover {
+      color: #9cd;
+      text-decoration: underline;
+    }
+
+    /* Status bar */
+    #status-bar {
+      background: var(--gray-dark);
+      border-top: 1px solid var(--gray-mid);
+      padding: 4px 12px;
+      font-size: 11px;
+      color: #666;
+      flex-shrink: 0;
+    }
+    #status-bar.connected {
+      color: #7ab;
+    }
+
+    /* Fullscreen mode - only for Knight TV */
+    #tv11-panel:fullscreen {
+      background: #000;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #tv11-panel:fullscreen .terminal-window,
+    #tv11-panel:fullscreen .terminal-content {
+      display: contents;
+    }
+    #tv11-panel:fullscreen .terminal-titlebar {
+      display: none;
+    }
+    #tv11-panel:fullscreen canvas {
+      display: block;
+    }
+    #tv11-panel:fullscreen .virtual-keyboard-container {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    #tv11-panel:fullscreen.keyboard-visible .virtual-keyboard-container {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="header-bar">
+      <div class="logo-area">
+        <div class="logo">
+          <div class="letter">d</div>
+          <div class="letter">i</div>
+          <div class="letter">g</div>
+          <div class="letter">i</div>
+          <div class="letter">t</div>
+          <div class="letter">a</div>
+          <div class="letter">l</div>
+        </div>
+        <span class="logo-pdp">PDP-10</span>
+      </div>
+      <div class="tab-divider"></div>
+      <div class="tab-group">
+        <button class="tab active" data-target="tv11">Knight TV</button>
+        <button class="tab" data-target="console">Console</button>
+        <button class="tab" data-target="term0">Terminal</button>
+      </div>
+      <div class="header-spacer"></div>
+    </div>
+
+    <div id="content">
+      <div id="terminal-area">
+        <div id="tv11-panel" class="terminal-panel active">
+          <div class="terminal-window">
+            <div class="terminal-titlebar">
+              <div class="color-switcher">
+                <button class="color-btn green active" data-color="green" title="Green"></button>
+                <button class="color-btn amber" data-color="amber" title="Amber"></button>
+                <button class="color-btn grey" data-color="grey" title="Grey"></button>
+              </div>
+              <div class="titlebar-buttons">
+                <button class="connect-btn">Connect</button>
+                <button class="keyboard-toggle-btn titlebar-btn" title="Virtual Keyboard">Kbd</button>
+                <button id="fullscreen-btn" class="titlebar-btn" title="Fullscreen (F8/F11)">&#x26F6;</button>
+              </div>
+            </div>
+            <div class="terminal-content">
+              <canvas id="tv11-canvas" class="preview"></canvas>
+            </div>
+          </div>
+          <div class="virtual-keyboard-container">
+            <div id="tv11-virtual-keyboard"></div>
+          </div>
+        </div>
+        <div id="console-panel" class="terminal-panel">
+          <div class="terminal-window">
+            <div class="terminal-titlebar">
+              <div class="color-switcher">
+                <button class="color-btn green active" data-color="green" title="Green"></button>
+                <button class="color-btn amber" data-color="amber" title="Amber"></button>
+                <button class="color-btn grey" data-color="grey" title="Grey"></button>
+              </div>
+              <div class="titlebar-buttons">
+                <button class="connect-btn">Connect</button>
+                <button class="keyboard-toggle-btn titlebar-btn" title="Virtual Keyboard">Kbd</button>
+              </div>
+            </div>
+            <div class="terminal-content">
+              <div class="text-terminal" id="console-terminal"></div>
+            </div>
+          </div>
+          <div class="virtual-keyboard-container">
+            <div id="console-virtual-keyboard"></div>
+          </div>
+        </div>
+        <div id="term0-panel" class="terminal-panel">
+          <div class="terminal-window">
+            <div class="terminal-titlebar">
+              <div class="color-switcher">
+                <button class="color-btn green active" data-color="green" title="Green"></button>
+                <button class="color-btn amber" data-color="amber" title="Amber"></button>
+                <button class="color-btn grey" data-color="grey" title="Grey"></button>
+              </div>
+              <div class="titlebar-buttons">
+                <button class="connect-btn">Connect</button>
+                <button class="keyboard-toggle-btn titlebar-btn" title="Virtual Keyboard">Kbd</button>
+              </div>
+            </div>
+            <div class="terminal-content">
+              <div class="text-terminal" id="term0-terminal"></div>
+            </div>
+          </div>
+          <div class="virtual-keyboard-container">
+            <div id="term0-virtual-keyboard"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sidebar">
+        <div id="cheatsheet" class="sidebar-section">
+          <h3>Quick Reference</h3>
+          <div id="cheatsheet-content"></div>
+        </div>
+        <div id="links-section" class="sidebar-section">
+          <h3>Links</h3>
+          <a href="https://obsolescence.dev/pdp10.html" target="_blank">PiDP-10 Replica</a>
+          <a href="https://obsolescence.dev/pidp10-sw/PiDP-10_Manual.pdf" target="_blank">PiDP-10 Manual</a>
+          <a href="https://github.com/obsolescence/pidp10" target="_blank">PiDP-10 Github</a>
+          <a href="https://github.com/PDP-10/its" target="_blank">ITS Reconstruction project</a>
+          <a href="https://obsolescenceguaranteed.blogspot.com/2020/02/a-turists-guide-to-its.html" target="_blank">A Turist's Guide to ITS</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="status-bar">Ready</div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

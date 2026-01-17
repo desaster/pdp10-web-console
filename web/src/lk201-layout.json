@@ -1,0 +1,48 @@
+{
+  "id": "lk201",
+  "name": "LK201",
+  "kle": [
+["F1","F2","F3","F4","F5",{"x":0.75},"F6","F7","F8","F9","F10",{"x":0.75},"F11","F12","F13","F14",{"x":0.75,"w":1.5},"Help",{"w":1.5},"Do",{"x":0.5},"F17","F18","F19","F20"],
+[{"y":0.5,"x":0.75},"~<br>`","!<br>1","@<br>2","#<br>3","$<br>4","%<br>5","^<br>6","&<br>7","*<br>8","(<br>9",")<br>0","_<br>-","+<br>=",{"w":2},"←×",{"x":0.5},"Find","Insert","Remove",{"x":0.5},"PF1","PF2","PF3","PF4"],
+[{"x":0.75,"w":1.5},"Tab","Q","W","E","R","T","Y","U","I","O","P","{<br>[","}<br>]",{"x":0.25,"w":1.25,"h":2,"w2":1.5,"h2":1,"x2":-0.25},"Return",{"x":0.5},"Select","Prev","Next",{"x":0.5},"7","8","9","-"],
+["Ctrl",{"w":1.5},"Lock","A","S","D","F","G","H","J","K","L",":<br>;","\"<br>'","|<br>\\",{"x":2.75},"↑",{"x":1.5},"4","5","6",","],
+[{"w":2},"Shift","><br><","Z","X","C","V","B","N","M","<<br>,","><br>.","?<br>/",{"w":2.25},"Shift",{"x":1},"←","↓","→",{"x":0.5},"1","2","3",{"h":2},"Enter"],
+[{"x":1.25,"w":2},"Compose",{"a":7,"w":9},"",{"x":7.5,"a":4,"w":2},"0","."]
+  ],
+  "keys": [
+    {"id": "f1"}, {"id": "f2"}, {"id": "f3"}, {"id": "f4"}, {"id": "f5"},
+    {"id": "f6", "escape": "\u001b[17~"}, {"id": "f7", "escape": "\u001b[18~"}, {"id": "f8", "escape": "\u001b[19~"}, {"id": "f9", "escape": "\u001b[20~"}, {"id": "f10", "escape": "\u001b[21~"},
+    {"id": "f11", "escape": "\u001b[23~"}, {"id": "f12", "escape": "\u001b[24~"}, {"id": "f13", "escape": "\u001b[25~"}, {"id": "f14", "escape": "\u001b[26~"},
+    {"id": "help", "escape": "\u001b[28~"}, {"id": "do", "escape": "\u001b[29~"},
+    {"id": "f17", "escape": "\u001b[31~"}, {"id": "f18", "escape": "\u001b[32~"}, {"id": "f19", "escape": "\u001b[33~"}, {"id": "f20", "escape": "\u001b[34~"},
+
+    {"id": "backtick", "char": "`"}, {"id": "1", "char": "1"}, {"id": "2", "char": "2"}, {"id": "3", "char": "3"}, {"id": "4", "char": "4"},
+    {"id": "5", "char": "5"}, {"id": "6", "char": "6"}, {"id": "7", "char": "7"}, {"id": "8", "char": "8"}, {"id": "9", "char": "9"},
+    {"id": "0", "char": "0"}, {"id": "minus", "char": "-"}, {"id": "equals", "char": "="}, {"id": "backspace", "char": "\u007f"},
+    {"id": "find", "escape": "\u001b[1~"}, {"id": "insert", "escape": "\u001b[2~"}, {"id": "remove", "escape": "\u001b[3~"},
+    {"id": "pf1", "escape": "\u001bOP"}, {"id": "pf2", "escape": "\u001bOQ"}, {"id": "pf3", "escape": "\u001bOR"}, {"id": "pf4", "escape": "\u001bOS"},
+
+    {"id": "tab", "char": "\t"}, {"id": "q", "char": "q"}, {"id": "w", "char": "w"}, {"id": "e", "char": "e"}, {"id": "r", "char": "r"},
+    {"id": "t", "char": "t"}, {"id": "y", "char": "y"}, {"id": "u", "char": "u"}, {"id": "i", "char": "i"}, {"id": "o", "char": "o"},
+    {"id": "p", "char": "p"}, {"id": "lbracket", "char": "["}, {"id": "rbracket", "char": "]"}, {"id": "return", "char": "\r"},
+    {"id": "select", "escape": "\u001b[4~"}, {"id": "prev", "escape": "\u001b[5~"}, {"id": "next", "escape": "\u001b[6~"},
+    {"id": "kp7", "escape": "\u001bOw"}, {"id": "kp8", "escape": "\u001bOx"}, {"id": "kp9", "escape": "\u001bOy"}, {"id": "kpminus", "escape": "\u001bOm"},
+
+    {"id": "ctrl", "modifier": "ctrl", "sticky": true}, {"id": "lock", "modifier": "capslock", "sticky": true},
+    {"id": "a", "char": "a"}, {"id": "s", "char": "s"}, {"id": "d", "char": "d"}, {"id": "f", "char": "f"}, {"id": "g", "char": "g"},
+    {"id": "h", "char": "h"}, {"id": "j", "char": "j"}, {"id": "k", "char": "k"}, {"id": "l", "char": "l"},
+    {"id": "semicolon", "char": ";"}, {"id": "quote", "char": "'"}, {"id": "backslash", "char": "\\"},
+    {"id": "up", "escape": "\u001b[A"},
+    {"id": "kp4", "escape": "\u001bOt"}, {"id": "kp5", "escape": "\u001bOu"}, {"id": "kp6", "escape": "\u001bOv"}, {"id": "kpcomma", "escape": "\u001bOl"},
+
+    {"id": "lshift", "modifier": "shift", "sticky": true}, {"id": "ltgt", "char": ">"},
+    {"id": "z", "char": "z"}, {"id": "x", "char": "x"}, {"id": "c", "char": "c"}, {"id": "v", "char": "v"}, {"id": "b", "char": "b"},
+    {"id": "n", "char": "n"}, {"id": "m", "char": "m"}, {"id": "comma", "char": ","}, {"id": "period", "char": "."}, {"id": "slash", "char": "/"},
+    {"id": "rshift", "modifier": "shift", "sticky": true},
+    {"id": "left", "escape": "\u001b[D"}, {"id": "down", "escape": "\u001b[B"}, {"id": "right", "escape": "\u001b[C"},
+    {"id": "kp1", "escape": "\u001bOq"}, {"id": "kp2", "escape": "\u001bOr"}, {"id": "kp3", "escape": "\u001bOs"}, {"id": "kpenter", "escape": "\u001bOM"},
+
+    {"id": "compose"}, {"id": "space", "char": " "},
+    {"id": "kp0", "escape": "\u001bOp"}, {"id": "kpdot", "escape": "\u001bOn"}
+  ]
+}
