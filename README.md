@@ -6,7 +6,7 @@ system. I mainly intend to use it on my
 for quick operations, like accessing the ITS console for bootup and shutdown
 operations.
 
-**The code is heavily LLM generated, use with caution!**
+![](./pics/tvcon_shot.png)
 
 ## Quick Start
 
