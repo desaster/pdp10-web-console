@@ -3,9 +3,11 @@
 //
 // Note: This file was generated with LLM assistance.  Use with caution.
 
-// Knight keyboard mapping (from tvcon.c)
+// Knight keyboard handler - maps physical PC keyboard to Knight scancodes
 
-// Modifier bits
+import knightLayout from './knight-tv-layout.json';
+
+// Modifier bits (match Knight hardware)
 export const MOD_RSHIFT = 0o100;
 export const MOD_LSHIFT = 0o200;
 export const MOD_RTOP = 0o400;
@@ -16,117 +18,36 @@ export const MOD_RMETA = 0o10000;
 export const MOD_LMETA = 0o20000;
 export const MOD_SLOCK = 0o40000;
 
-// ASCII to Knight keyboard codes
-const SYMBOL_MAP: Record<string, number> = {
-  ' ': 0o77,
-  '!': 0o02 | MOD_LSHIFT,
-  '"': 0o03 | MOD_LSHIFT,
-  '#': 0o04 | MOD_LSHIFT,
-  '$': 0o05 | MOD_LSHIFT,
-  '%': 0o06 | MOD_LSHIFT,
-  '&': 0o07 | MOD_LSHIFT,
-  "'": 0o10 | MOD_LSHIFT,
-  '(': 0o11 | MOD_LSHIFT,
-  ')': 0o12 | MOD_LSHIFT,
-  '*': 0o61 | MOD_LSHIFT,
-  '+': 0o60 | MOD_LSHIFT,
-  ',': 0o74,
-  '-': 0o14,
-  '.': 0o75,
-  '/': 0o76,
-  '0': 0o13,
-  '1': 0o02,
-  '2': 0o03,
-  '3': 0o04,
-  '4': 0o05,
-  '5': 0o06,
-  '6': 0o07,
-  '7': 0o10,
-  '8': 0o11,
-  '9': 0o12,
-  ':': 0o61,
-  ';': 0o60,
-  '<': 0o74 | MOD_LSHIFT,
-  '=': 0o14 | MOD_LSHIFT,
-  '>': 0o75 | MOD_LSHIFT,
-  '?': 0o76 | MOD_LSHIFT,
-  '@': 0o15,
-  A: 0o47 | MOD_LSHIFT,
-  B: 0o71 | MOD_LSHIFT,
-  C: 0o67 | MOD_LSHIFT,
-  D: 0o51 | MOD_LSHIFT,
-  E: 0o26 | MOD_LSHIFT,
-  F: 0o52 | MOD_LSHIFT,
-  G: 0o53 | MOD_LSHIFT,
-  H: 0o54 | MOD_LSHIFT,
-  I: 0o33 | MOD_LSHIFT,
-  J: 0o55 | MOD_LSHIFT,
-  K: 0o56 | MOD_LSHIFT,
-  L: 0o57 | MOD_LSHIFT,
-  M: 0o73 | MOD_LSHIFT,
-  N: 0o72 | MOD_LSHIFT,
-  O: 0o34 | MOD_LSHIFT,
-  P: 0o35 | MOD_LSHIFT,
-  Q: 0o24 | MOD_LSHIFT,
-  R: 0o27 | MOD_LSHIFT,
-  S: 0o50 | MOD_LSHIFT,
-  T: 0o30 | MOD_LSHIFT,
-  U: 0o32 | MOD_LSHIFT,
-  V: 0o70 | MOD_LSHIFT,
-  W: 0o25 | MOD_LSHIFT,
-  X: 0o66 | MOD_LSHIFT,
-  Y: 0o31 | MOD_LSHIFT,
-  Z: 0o65 | MOD_LSHIFT,
-  '[': 0o36,
-  '\\': 0o40,
-  ']': 0o37,
-  '^': 0o16,
-  _: 0o13 | MOD_LSHIFT,
-  '`': 0o15 | MOD_LSHIFT,
-  a: 0o47,
-  b: 0o71,
-  c: 0o67,
-  d: 0o51,
-  e: 0o26,
-  f: 0o52,
-  g: 0o53,
-  h: 0o54,
-  i: 0o33,
-  j: 0o55,
-  k: 0o56,
-  l: 0o57,
-  m: 0o73,
-  n: 0o72,
-  o: 0o34,
-  p: 0o35,
-  q: 0o24,
-  r: 0o27,
-  s: 0o50,
-  t: 0o30,
-  u: 0o32,
-  v: 0o70,
-  w: 0o25,
-  x: 0o66,
-  y: 0o31,
-  z: 0o65,
-  '{': 0o36 | MOD_LSHIFT,
-  '|': 0o40 | MOD_LSHIFT,
-  '}': 0o37 | MOD_LSHIFT,
-  '~': 0o16 | MOD_LSHIFT,
-};
+// Build character-to-scancode map from layout
+// Maps ASCII characters to (scancode | implicit_modifiers)
+const SYMBOL_MAP: Record<string, number> = {};
 
-// Special keys by key name or code
+for (const key of knightLayout.keys) {
+  if (key.code !== undefined) {
+    // Unshifted character
+    if (key.char) {
+      SYMBOL_MAP[key.char] = key.code;
+    }
+    // Shifted character (includes shift modifier)
+    if (key.shiftChar) {
+      SYMBOL_MAP[key.shiftChar] = key.code | MOD_LSHIFT;
+    }
+  }
+}
+
+// Special keys - maps PC keyboard codes to Knight scancodes
+// This is a configuration choice for how PC function keys map to Knight functions
 const SCANCODE_MAP: Record<string, number> = {
-  F12: 0o00, // BREAK
-  F2: 0o01, // ESC
-  F1: 0o20, // CALL (login)
-  F4: 0o21, // CLEAR
-  Tab: 0o22,
-  Escape: 0o23, // ALT MODE
-  Delete: 0o46, // RUBOUT
-  Backspace: 0o46, // RUBOUT
-  Enter: 0o62,
-  F3: 0o64, // NEXT/BACK
+  F12: 0,   // BREAK
+  F2: 1,    // ESC
+  F1: 16,   // CALL (login)
+  F4: 17,   // CLEAR
+  Tab: 18,
+  Escape: 19, // ALT MODE
+  Delete: 38, // RUBOUT
+  Backspace: 38, // RUBOUT
+  Enter: 50,
+  F3: 52,   // BACK/NEXT
 };
 
 // Modifier key codes to modifier bits

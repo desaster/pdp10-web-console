@@ -15,7 +15,10 @@ export interface KeyDef {
   height?: number;      // height in units (default 1)
   code?: number;        // Knight TV scancode (for tv11)
   char?: string;        // character to send (for text terminals)
+  shiftChar?: string;   // character when shift is active
+  ctrlChar?: string;    // character when ctrl is active
   escape?: string;      // escape sequence (for text terminals)
+  altEscape?: string;   // escape sequence in alternate keypad mode
   modifier?: string;    // modifier type: 'shift', 'ctrl', 'meta', 'top'
   sticky?: boolean;     // modifier stays active until next key
 }
@@ -174,14 +177,10 @@ export class VirtualKeyboard {
     }
 
     if (key.modifier) {
-      if (key.sticky) {
-        if (this.activeModifiers.has(key.modifier)) {
-          this.activeModifiers.delete(key.modifier);
-          keyEl?.classList.remove('vk-active');
-        } else {
-          this.activeModifiers.add(key.modifier);
-          keyEl?.classList.add('vk-active');
-        }
+      // Toggle modifier on/off when clicked
+      if (this.activeModifiers.has(key.modifier)) {
+        this.activeModifiers.delete(key.modifier);
+        keyEl?.classList.remove('vk-active');
       } else {
         this.activeModifiers.add(key.modifier);
         keyEl?.classList.add('vk-active');
@@ -194,14 +193,9 @@ export class VirtualKeyboard {
     const keyEl = this.keyElements.get(key.id);
 
     if (key.modifier) {
-      if (!key.sticky) {
-        this.activeModifiers.delete(key.modifier);
-        keyEl?.classList.remove('vk-active');
-        keyEl?.classList.remove('vk-pressed');
-        this.updateModifierVisuals();
-      } else {
-        keyEl?.classList.remove('vk-pressed');
-      }
+      // For modifiers, just remove pressed state - don't clear the modifier
+      // Non-sticky modifiers will be cleared after next character key press
+      keyEl?.classList.remove('vk-pressed');
     } else {
       keyEl?.classList.remove('vk-pressed');
       this.onKeyPress(key, new Set(this.activeModifiers));

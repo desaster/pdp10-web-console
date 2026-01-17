@@ -15,7 +15,7 @@ import { TextTerminal } from './terminal';
 import { TelnetConnection } from './terminal/connection';
 import { cheatsheets, CheatSheet } from './content/cheatsheets';
 import { VirtualKeyboard, KeyDef } from './virtual-keyboard';
-import { knightTVLayout, vt220Layout, vt220ShiftMap, ctrlMap } from './keyboard-layouts';
+import { knightTVLayout, vt52Layout } from './keyboard-layouts';
 
 declare global {
   interface Window {
@@ -197,7 +197,7 @@ class App {
     this.tv11Connection.sendKey(code);
   }
 
-  private handleVT220VirtualKey(key: KeyDef, modifiers: Set<string>, send: (data: string) => void): void {
+  private handleVT52VirtualKey(key: KeyDef, modifiers: Set<string>, send: (data: string) => void): void {
     // Handle escape sequences (function keys, arrows, etc.)
     if (key.escape) {
       send(key.escape);
@@ -207,27 +207,28 @@ class App {
     // Handle regular characters
     if (key.char) {
       let char = key.char;
+      const isLetter = /^[a-z]$/i.test(char);
+
+      // Apply ctrl first (takes priority)
+      if (modifiers.has('ctrl') && key.ctrlChar) {
+        send(key.ctrlChar);
+        return;
+      }
 
       // Apply caps lock (only affects letters)
       const isCapsLock = modifiers.has('capslock');
-      const isLetter = /^[a-z]$/i.test(char);
       if (isCapsLock && isLetter) {
         char = char.toUpperCase();
       }
 
       // Apply shift
       if (modifiers.has('shift')) {
-        if (vt220ShiftMap[char]) {
-          char = vt220ShiftMap[char];
+        if (key.shiftChar) {
+          char = key.shiftChar;
         } else if (isCapsLock && isLetter) {
           // Shift + Caps Lock = lowercase for letters
           char = char.toLowerCase();
         }
-      }
-
-      // Apply ctrl
-      if (modifiers.has('ctrl') && ctrlMap[char.toLowerCase()]) {
-        char = ctrlMap[char.toLowerCase()];
       }
 
       send(char);
@@ -271,8 +272,8 @@ class App {
     // Initialize virtual keyboard for console
     this.consoleVirtualKeyboard = new VirtualKeyboard(
       'console-virtual-keyboard',
-      vt220Layout,
-      (key, modifiers) => this.handleVT220VirtualKey(key, modifiers, (data) => this.consoleConnection?.send(data))
+      vt52Layout,
+      (key, modifiers) => this.handleVT52VirtualKey(key, modifiers, (data) => this.consoleConnection?.send(data))
     );
     this.consoleVirtualKeyboard.render();
 
@@ -303,8 +304,8 @@ class App {
     // Initialize virtual keyboard for term0
     this.term0VirtualKeyboard = new VirtualKeyboard(
       'term0-virtual-keyboard',
-      vt220Layout,
-      (key, modifiers) => this.handleVT220VirtualKey(key, modifiers, (data) => this.term0Connection?.send(data))
+      vt52Layout,
+      (key, modifiers) => this.handleVT52VirtualKey(key, modifiers, (data) => this.term0Connection?.send(data))
     );
     this.term0VirtualKeyboard.render();
 

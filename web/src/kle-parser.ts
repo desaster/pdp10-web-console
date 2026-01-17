@@ -31,6 +31,9 @@ export interface HybridKeyDef {
   code?: number;      // Knight TV scancode
   escape?: string;    // escape sequence (text terminals)
   char?: string;      // character to send (text terminals)
+  shiftChar?: string; // character when shift is active
+  ctrlChar?: string;  // character when ctrl is active
+  altEscape?: string; // escape sequence in alternate keypad mode
   modifier?: string;
   sticky?: boolean;
 }
@@ -140,6 +143,9 @@ export function parseHybridLayout(layout: HybridLayout): KeyboardLayout {
           if (keyInfo.code !== undefined) keyDef.code = keyInfo.code;
           if (keyInfo.escape) keyDef.escape = keyInfo.escape;
           if (keyInfo.char) keyDef.char = keyInfo.char;
+          if (keyInfo.shiftChar) keyDef.shiftChar = keyInfo.shiftChar;
+          if (keyInfo.ctrlChar) keyDef.ctrlChar = keyInfo.ctrlChar;
+          if (keyInfo.altEscape) keyDef.altEscape = keyInfo.altEscape;
           if (keyInfo.modifier) {
             keyDef.modifier = keyInfo.modifier;
             keyDef.sticky = keyInfo.sticky ?? true;

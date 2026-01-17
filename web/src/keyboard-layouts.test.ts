@@ -5,8 +5,8 @@
 
 import { describe, it, expect } from 'vitest';
 import { HybridLayout } from './kle-parser';
-import lk201Layout from './lk201-layout.json';
 import knightTvLayout from './knight-tv-layout.json';
+import vt52Layout from './vt52-layout.json';
 
 // Count keys in KLE array (strings only, not property objects)
 function countKleKeys(kle: (string | Record<string, unknown>)[][]): number {
@@ -23,8 +23,8 @@ function countKleKeys(kle: (string | Record<string, unknown>)[][]): number {
 
 describe('keyboard layouts', () => {
   const layouts: [string, HybridLayout][] = [
-    ['lk201', lk201Layout as HybridLayout],
     ['knight-tv', knightTvLayout as HybridLayout],
+    ['vt52', vt52Layout as HybridLayout],
   ];
 
   describe.each(layouts)('%s layout', (name, layout) => {
