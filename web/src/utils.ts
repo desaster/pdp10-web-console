@@ -7,11 +7,11 @@
 export const MOBILE_BREAKPOINT = 768;
 
 export function isMobile(): boolean {
-  return window.innerWidth <= MOBILE_BREAKPOINT;
+    return window.innerWidth <= MOBILE_BREAKPOINT;
 }
 
 // Get element height safely
 export function getElementHeight(selector: string): number {
-  const el = document.querySelector(selector);
-  return el ? el.getBoundingClientRect().height : 0;
+    const el = document.querySelector(selector);
+    return el ? el.getBoundingClientRect().height : 0;
 }
