@@ -1,3 +1,8 @@
+//
+// © 2026 Upi Tamminen. MIT License.
+//
+// Note: This file was generated with LLM assistance.  Use with caution.
+
 import { describe, it, expect } from 'vitest';
 import { HybridLayout } from './kle-parser';
 import lk201Layout from './lk201-layout.json';

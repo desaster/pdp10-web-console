@@ -1,3 +1,8 @@
+//
+// © 2026 Upi Tamminen. MIT License.
+//
+// Note: This file was generated with LLM assistance.  Use with caution.
+
 // TV11 protocol constants and helpers
 
 export const WIDTH = 576;

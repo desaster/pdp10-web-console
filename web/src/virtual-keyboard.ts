@@ -1,3 +1,8 @@
+//
+// © 2026 Upi Tamminen. MIT License.
+//
+// Note: This file was generated with LLM assistance.  Use with caution.
+
 // Virtual keyboard component for KLE layouts
 
 export type LegendAlignment = 'top-bottom' | 'center';

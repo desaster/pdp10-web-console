@@ -1,3 +1,8 @@
+//
+// © 2026 Upi Tamminen. MIT License.
+//
+// Note: This file was generated with LLM assistance.  Use with caution.
+
 // Parser for Keyboard Layout Editor (KLE) JSON format
 // See: http://www.keyboard-layout-editor.com/
 

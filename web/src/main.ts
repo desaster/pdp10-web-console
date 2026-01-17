@@ -1,4 +1,11 @@
+//
+// © 2026 Upi Tamminen. MIT License.
+//
+// Note: This file was generated with LLM assistance.  Use with caution.
+
+//
 // PDP-10 Web Console - Main entry point
+//
 
 import { WIDTH, HEIGHT } from './protocol';
 import { Display } from './display';

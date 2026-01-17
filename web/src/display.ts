@@ -1,3 +1,8 @@
+//
+// © 2026 Upi Tamminen. MIT License.
+//
+// Note: This file was generated with LLM assistance.  Use with caution.
+
 // Canvas display and framebuffer management
 
 import { WIDTH, HEIGHT } from './protocol';
