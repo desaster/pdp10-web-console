@@ -129,6 +129,24 @@ For subpath deployment (e.g., `/pdp10/`), build with:
 BASE_PATH=/pdp10/ npm run build
 ```
 
+## Deployment using docker and docker-compose
+
+A simple `docker-compose.yml` is provided for easy deployment using
+docker-compose. The docker-compose configuration should automatically build
+the required images using `web/web.Dockerfile` and `proxy/proxy.Dockerfile`.
+
+Before running the containers, add the required TV11_HOST and SIMH_HOST
+variables to `.env` file.  See the included `.env.example` for reference.
+
+Then start the containers using:
+
+```sh
+docker-compose up -d
+```
+
+If everything goes well, the web client should be accessible at
+http://localhost:1992/
+
 ## Thanks
 
 * [PDP-10 Simh](https://github.com/rcornwell/sims) - Richard Cornwell's PDP-10 emulator

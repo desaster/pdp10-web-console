@@ -1,0 +1,34 @@
+#
+# docker-compose configuration for the PDP-10 web console
+#
+# Before using this compose file, create an .env file with the required host
+# names for simh and tv11. See the included .env.example for reference.
+#
+services:
+  pdp10-proxy:
+    container_name: pdp10-proxy
+    image: localhost/pdp10-proxy:latest
+    build:
+      context: ./proxy
+      dockerfile: proxy.Dockerfile
+    command: -p 11133 -t tv11:raw:${TV11_HOST}:11100 -t console:telnet:${SIMH_HOST}:1025 -t term0:telnet:${SIMH_HOST}:10018
+    pull_policy: never
+    restart: never
+    env_file:
+      - path: .env.dist
+      - path: .env.local
+        required: false
+  pdp10-web:
+    container_name: pdp10-web
+    image: localhost/pdp10-web:latest
+    build:
+      context: ./web
+      dockerfile: web.Dockerfile
+    pull_policy: never
+    restart: never
+    ports:
+      - '1992:80'
+    env_file:
+      - path: .env.dist
+      - path: .env.local
+        required: false
