@@ -6,6 +6,7 @@
 // Canvas display and framebuffer management
 
 import { WIDTH, HEIGHT } from './protocol';
+import { isMobile, getElementHeight } from './utils';
 
 const BIT_MASK = 0x8000;
 
@@ -121,13 +122,24 @@ export class Display {
 
   // Update canvas scale to fit container
   updateScale(maxHeight?: number): void {
-    // Use fullscreen element if available, otherwise use container
     const fsElement = document.fullscreenElement as HTMLElement | null;
-    const sizeSource = fsElement || this.container;
-    const availWidth = sizeSource.clientWidth;
-    // Subtract ~35px for the titlebar when not in fullscreen
-    const titlebarOffset = fsElement ? 0 : 35;
-    let availHeight = sizeSource.clientHeight - titlebarOffset;
+    const mobile = isMobile();
+    const titlebarHeight = getElementHeight('#tv11-panel .terminal-titlebar');
+
+    let availWidth: number;
+    let availHeight: number;
+
+    if (fsElement) {
+      availWidth = fsElement.clientWidth;
+      availHeight = fsElement.clientHeight;
+    } else if (mobile) {
+      // Mobile: use actual window size
+      availWidth = window.innerWidth;
+      availHeight = this.container.clientHeight - titlebarHeight;
+    } else {
+      availWidth = this.container.clientWidth;
+      availHeight = this.container.clientHeight - titlebarHeight;
+    }
 
     // If maxHeight specified (e.g., when keyboard is visible), use that
     if (maxHeight !== undefined && maxHeight > 0) {
@@ -136,7 +148,8 @@ export class Display {
 
     const scaleX = availWidth / WIDTH;
     const scaleY = availHeight / HEIGHT;
-    const scale = Math.min(scaleX, scaleY) * 0.95;
+    const scaleFactor = mobile ? 1.0 : 0.95;
+    const scale = Math.min(scaleX, scaleY) * scaleFactor;
 
     this.canvas.style.width = Math.floor(WIDTH * scale) + 'px';
     this.canvas.style.height = Math.floor(HEIGHT * scale) + 'px';

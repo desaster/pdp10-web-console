@@ -16,6 +16,7 @@ import { TelnetConnection } from './terminal/connection';
 import { cheatsheets, CheatSheet } from './content/cheatsheets';
 import { VirtualKeyboard, KeyDef } from './virtual-keyboard';
 import { knightTVLayout, vt52Layout } from './keyboard-layouts';
+import { isMobile } from './utils';
 
 declare global {
   interface Window {
@@ -138,7 +139,7 @@ class App {
         this.terminalStates.tv11.connected = false;
         this.updateStatus();
       },
-      onError: (msg) => this.setStatus(msg),
+      onError: (msg) => console.error(msg),
       onFB: (x, y, w, h, packed) => this.display.unpack(packed, x, y, w, h),
       onWD: (addr, word) => this.display.updateWord(addr, word),
     });
@@ -265,7 +266,7 @@ class App {
         this.terminalStates.console.connected = false;
         this.updateStatus();
       },
-      onError: (msg) => this.setStatus(msg),
+      onError: (msg) => console.error(msg),
       onData: (data) => this.consoleTerminal?.write(data),
     });
 
@@ -279,6 +280,7 @@ class App {
 
     this.consoleTerminal.open();
     this.consoleTerminal.setPreviewMode(true, TERM_COLORS[this.currentColor]);
+    this.fitTerminalToMobile(this.consoleTerminal);
   }
 
   private initTerm0Terminal(): void {
@@ -297,7 +299,7 @@ class App {
         this.terminalStates.term0.connected = false;
         this.updateStatus();
       },
-      onError: (msg) => this.setStatus(msg),
+      onError: (msg) => console.error(msg),
       onData: (data) => this.term0Terminal?.write(data),
     });
 
@@ -311,6 +313,13 @@ class App {
 
     this.term0Terminal.open();
     this.term0Terminal.setPreviewMode(true, TERM_COLORS[this.currentColor]);
+    this.fitTerminalToMobile(this.term0Terminal);
+  }
+
+  private fitTerminalToMobile(terminal: TextTerminal): void {
+    if (isMobile()) {
+      terminal.fitToWidth(window.innerWidth);
+    }
   }
 
   private renderLoop(): void {
@@ -505,26 +514,14 @@ class App {
       `#${this.activeTab}-panel .connect-btn`
     ) as HTMLButtonElement;
 
-    if (state.connected) {
-      this.setStatus('Connected', true);
-      if (connectBtn) {
+    if (connectBtn) {
+      if (state.connected) {
         connectBtn.textContent = 'Disconnect';
         connectBtn.classList.add('connected');
-      }
-    } else {
-      this.setStatus(state.initialized ? 'Disconnected' : 'Ready');
-      if (connectBtn) {
+      } else {
         connectBtn.textContent = 'Connect';
         connectBtn.classList.remove('connected');
       }
-    }
-  }
-
-  private setStatus(text: string, connected = false): void {
-    const el = document.getElementById('status-bar');
-    if (el) {
-      el.textContent = text;
-      el.classList.toggle('connected', connected);
     }
   }
 

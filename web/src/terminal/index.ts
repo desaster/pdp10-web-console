@@ -105,4 +105,18 @@ export class TextTerminal {
     const color = preview ? '#888888' : activeColor;
     this.setColor(color);
   }
+
+  setFontSize(size: number): void {
+    this.terminal.options.fontSize = size;
+    this.terminal.refresh(0, this.terminal.rows - 1);
+  }
+
+  // Calculate font size to fit 80 columns in given width
+  fitToWidth(width: number): void {
+    // Monospace char width is approximately 0.6 × font size
+    const charWidthRatio = 0.6;
+    const targetCols = 80;
+    const fontSize = Math.floor(width / (targetCols * charWidthRatio));
+    this.setFontSize(Math.max(8, Math.min(fontSize, 16))); // Clamp between 8-16
+  }
 }
